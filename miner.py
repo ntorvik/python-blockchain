@@ -11,4 +11,4 @@ class Miner:
             payload = public_key + previous_block.hashStr + str(nonce)
             curr_hash = hashlib.sha256(str.encode(payload)).hexdigest()
             nonce += 1
-        return Block(curr_hash, previous_block, [], nonce)
+        return Block(curr_hash, previous_block, [], nonce, previous_block.height + 1)
