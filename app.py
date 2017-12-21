@@ -3,7 +3,7 @@ import random
 from miner import Miner
 from block_chain import BlockChain
 import file_helper
-from message import Message
+from queue import Queue
 from network import Network
 from message_processor import MessageProcessor
 
@@ -11,18 +11,17 @@ public_key = str(random.random())
 difficulty = 5
 serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)
-message = Message()
-network = Network(message, public_key)
+message_queue = Queue()
+network = Network(message_queue, public_key)
 
-miner = Miner(network)
-miner.start(block_chain, public_key, difficulty)
+miner = Miner(network, public_key)
+miner.start(block_chain, difficulty)
 
-message_processor = MessageProcessor(message, network, block_chain, miner, public_key, difficulty)
+message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, difficulty)
+network.publish('chain_request', block_chain.tail.height)
 
 try:
-    while True:
-        message_processor.process_messages()
-        time.sleep(5)
+    message_processor.process_messages()
 except KeyboardInterrupt:
     print("Exiting gracefully")
     miner.stop()

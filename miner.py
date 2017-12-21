@@ -4,13 +4,14 @@ import file_helper
 from block import Block
 
 
-class Miner():
-    def __init__(self, network):
+class Miner:
+    def __init__(self, network, public_key):
         self.network = network
+        self.public_key = public_key
         self.thread = None
 
-    def start(self, block_chain, public_key, difficulty):
-        self.thread = self.MinerThread(block_chain, public_key, difficulty, self.network)
+    def start(self, block_chain, difficulty):
+        self.thread = self.MinerThread(block_chain, self.public_key, difficulty, self.network)
         self.thread.start()
 
     def stop(self):
