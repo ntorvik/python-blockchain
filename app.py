@@ -8,9 +8,9 @@ from network import Network
 from message_processor import MessageProcessor
 
 public_key = str(random.random())
-difficulty = 6
+difficulty = 5
 serialized_block_chain = file_helper.load_blockchain()
-block_chain = BlockChain(serialized_block_chain)
+block_chain = BlockChain.deserialize(serialized_block_chain)
 message = Message()
 network = Network(message, public_key)
 

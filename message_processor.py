@@ -50,6 +50,7 @@ class MessageProcessor:
         self.miner.start(self.block_chain, self.public_key, self.difficulty)
 
     def _process_chain_request_message(self, message):
+        print("Sending my chain")
         self.network.publish('chain', self.block_chain.serialize())
 
     def _process_chain_message(self, message):
@@ -60,7 +61,6 @@ class MessageProcessor:
         # TODO: validate new chain
         print("Received a longer chain")
         self.miner.stop()
-        self.block_chain.head = received_chain.head
         self.block_chain.tail = received_chain.tail
         self.miner.start(self.block_chain, self.public_key, self.difficulty)
 
