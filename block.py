@@ -1,3 +1,5 @@
+from transaction import Transaction
+
 class Block:
     def __init__(self, hashStr, previous, transactions, nonce, height):
         self.hashStr = hashStr
@@ -12,9 +14,14 @@ class Block:
             'previous': self.previous.hashStr if self.previous else None,
             'nonce': self.nonce,
             'height': self.height,
-            'transactions': self.transactions
+            'transactions': [t.serialize() for t in self.transactions]
         }
 
     @classmethod
     def deserialize(cls, sb, previous):
-        return cls(sb['hashStr'], previous, sb['transactions'], sb['nonce'], sb['height'])
+        return cls(
+            sb['hashStr'],
+            previous,
+            [Transaction.deserialize(t) for t in sb['transactions']],
+            sb['nonce'],
+            sb['height'])
