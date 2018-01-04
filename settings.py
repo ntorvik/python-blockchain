@@ -1,0 +1,2 @@
+DIFFICULTY = 5
+REWARD = 1

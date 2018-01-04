@@ -3,7 +3,7 @@ import threading
 import file_helper
 from block import Block
 from transaction import Transaction
-
+import settings
 
 class Miner:
     def __init__(self, network, public_key):
@@ -26,7 +26,6 @@ class Miner:
             self.difficulty = difficulty
             self.network = network
             self.stopped = True
-            self.reward = 1
 
         def run(self):
             self.stopped = False
@@ -46,7 +45,7 @@ class Miner:
                 curr_hash = hashlib.sha256(str.encode(payload)).hexdigest()
                 nonce += 1
             print("Mined block: " + curr_hash)
-            reward_payment = Transaction(None, self.public_key, self.reward, None)
+            reward_payment = Transaction(None, self.public_key, settings.REWARD, None)
             new_block = Block(curr_hash, self.block_chain.tail, [reward_payment], nonce, self.block_chain.tail.height + 1)
             self.block_chain.append(new_block)
             file_helper.save_blockchain(self.block_chain.serialize())
