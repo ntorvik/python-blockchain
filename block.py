@@ -1,4 +1,6 @@
 from transaction import Transaction
+from merkletools import MerkleTools
+
 
 class Block:
     def __init__(self, hashStr, previous, transactions, nonce, height):
@@ -7,6 +9,12 @@ class Block:
         self.nonce = nonce
         self.height = height
         self.transactions = transactions
+
+    def get_merkle_root(self):
+        mt = MerkleTools()
+        [mt.add_leaf(str(t.serialize()), True) for t in self.transactions]
+        mt.make_tree()
+        return mt.get_merkle_root()
 
     def serialize(self):
         return {

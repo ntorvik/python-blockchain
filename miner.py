@@ -5,6 +5,7 @@ from block import Block
 from transaction import Transaction
 import settings
 
+
 class Miner:
     def __init__(self, network, public_key):
         self.network = network
@@ -36,17 +37,17 @@ class Miner:
             self.stopped = True
 
         def mine(self):
-            curr_hash = ''
-            nonce = self.block_chain.tail.nonce
-            while not (curr_hash.startswith('0' * self.difficulty)):
+            reward_payment = Transaction(None, self.public_key, settings.REWARD, None)
+            new_block = Block('', self.block_chain.tail, [reward_payment], self.block_chain.tail.nonce,
+                              self.block_chain.tail.height + 1)
+            while not (new_block.hashStr.startswith('0' * self.difficulty)):
                 if self.stopped:
                     return
-                payload = self.public_key + self.block_chain.tail.hashStr + str(nonce)
-                curr_hash = hashlib.sha256(str.encode(payload)).hexdigest()
-                nonce += 1
-            print("Mined block: " + curr_hash)
-            reward_payment = Transaction(None, self.public_key, settings.REWARD, None)
-            new_block = Block(curr_hash, self.block_chain.tail, [reward_payment], nonce, self.block_chain.tail.height + 1)
+                payload = new_block.get_merkle_root() + self.block_chain.tail.hashStr + str(new_block.nonce)
+                new_block.hashStr = hashlib.sha256(str.encode(payload)).hexdigest()
+                new_block.nonce += 1
+            print("Mined block: " + new_block.hashStr)
+
             self.block_chain.append(new_block)
             file_helper.save_blockchain(self.block_chain.serialize())
             self.network.publish('block', new_block.serialize())
