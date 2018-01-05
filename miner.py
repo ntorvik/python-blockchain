@@ -18,6 +18,7 @@ class Miner:
 
     def stop(self):
         self.thread.stop()
+        self.thread.join()
 
     class MinerThread(threading.Thread):
         def __init__(self, block_chain, public_key, difficulty, network):

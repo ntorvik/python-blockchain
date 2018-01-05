@@ -38,7 +38,7 @@ class MessageProcessor(threading.Thread):
         received_block = Block.deserialize(message, self.block_chain.tail)
         if received_block.height > (self.block_chain.tail.height + 1):
             print("I'm missing blocks")
-            self.miner.stop()  # TODO: wait for this
+            self.miner.stop()
             self.network.publish('chain_request', self.block_chain.tail.height)
             return
         if received_block.height <= self.block_chain.tail.height:
