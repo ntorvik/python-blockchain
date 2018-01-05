@@ -30,6 +30,8 @@ class Validator:
             return False
         if new_block.height != tail.height + 1:
             return False
+        if not new_block.hash_str.startswith('0' * settings.DIFFICULTY):
+            return False
         return True
 
     def validate_transaction(self, transaction):
