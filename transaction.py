@@ -27,5 +27,9 @@ class Transaction:
         ])
 
     @classmethod
-    def deserialize(cls, sb):
-        return cls(sb['input_transaction_hash'], sb['recipient'], sb['quantity'], sb['signature'])
+    def deserialize(cls, serialized_transaction):
+        return cls(
+            serialized_transaction['input_transaction_hash'],
+            serialized_transaction['recipient'],
+            serialized_transaction['quantity'],
+            serialized_transaction['signature'])
