@@ -43,9 +43,9 @@ class Miner:
             while not (new_block.hash_str.startswith('0' * self.difficulty)):
                 if self.stopped:
                     return
+                new_block.nonce += 1
                 payload = new_block.get_merkle_root() + self.block_chain.tail.hash_str + str(new_block.nonce)
                 new_block.hash_str = hashlib.sha256(str.encode(payload)).hexdigest()
-                new_block.nonce += 1
             print("Mined block: " + new_block.hash_str)
 
             self.block_chain.append(new_block)
