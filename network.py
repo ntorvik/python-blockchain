@@ -27,7 +27,6 @@ class Network:
         def run(self):
             for message in self.pubsub.listen():
                 if message['type'] != 'message':
-                    print("Ignoring extra message types")
                     continue
                 data = json.loads(message['data'].decode("utf-8"))
                 if data['sender'] == self.public_key:

@@ -1,10 +1,12 @@
 from block import Block
 from block_chain import BlockChain
 from validator import Validator
+import threading
 
 
-class MessageProcessor:
+class MessageProcessor(threading.Thread):
     def __init__(self, message_queue, network, block_chain, miner, public_key, difficulty):
+        threading.Thread.__init__(self)
         self.message_queue = message_queue
         self.network = network
         self.block_chain = block_chain
@@ -12,7 +14,7 @@ class MessageProcessor:
         self.public_key = public_key
         self.difficulty = difficulty
         self.validator = Validator(block_chain)
-
+        self.stopped = True
         self.message_processors = {
             'block': self._process_block_message,
             'chain': self._process_chain_message,
@@ -20,11 +22,17 @@ class MessageProcessor:
             'transaction': self._process_transaction_message,
         }
 
-    def process_messages(self):
-        message = self.message_queue.get()
-        while True:
-            self.message_processors[message['subject']](message['payload'])
+    def run(self):
+        self.stopped = False
+        while not self.stopped:
             message = self.message_queue.get()
+            if message['subject'] in self.message_processors:
+                self.message_processors[message['subject']](message['payload'])
+
+    def stop(self):
+        self.stopped = True
+        self.network.disconnect()
+        self.message_queue.put({'subject': 'noop'})
 
     def _process_block_message(self, message):
         received_block = Block.deserialize(message, self.block_chain.tail)

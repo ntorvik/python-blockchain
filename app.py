@@ -1,3 +1,4 @@
+import time
 from miner import Miner
 from block_chain import BlockChain
 import file_helper
@@ -17,11 +18,14 @@ miner = Miner(network, public_key)
 miner.start(block_chain, settings.DIFFICULTY)
 
 message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY)
+message_processor.start()
+
 network.publish('chain_request', block_chain.tail.height)
 
 try:
-    message_processor.process_messages()
+    while True:
+        time.sleep(1)
 except KeyboardInterrupt:
     print("Exiting gracefully")
     miner.stop()
-    network.disconnect()
+    message_processor.stop()
