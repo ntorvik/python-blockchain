@@ -12,12 +12,13 @@ public_key = KeyHelper().get_public_key()
 serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)
 message_queue = Queue()
+transaction_queue = Queue()
 network = Network(message_queue, public_key)
 
-miner = Miner(network, public_key)
+miner = Miner(network, public_key, transaction_queue)
 miner.start(block_chain, settings.DIFFICULTY)
 
-message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY)
+message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY, transaction_queue)
 message_processor.start()
 
 network.publish('chain_request', block_chain.tail.height)

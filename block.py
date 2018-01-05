@@ -3,33 +3,37 @@ from merkletools import MerkleTools
 
 
 class Block:
-    def __init__(self, hash_str, previous, transactions, nonce, height):
+    def __init__(self, hash_str, previous, nonce, height, merkle_root=None, transactions=None):
         self.hash_str = hash_str
         self.previous = previous
         self.nonce = nonce
         self.height = height
-        self.transactions = transactions
+        self.transactions = [] if transactions is None else transactions
+        self.merkle_root = merkle_root
+        self._mt = MerkleTools()
 
-    def get_merkle_root(self):
-        mt = MerkleTools()
-        [mt.add_leaf(str(t.serialize()), True) for t in self.transactions]
-        mt.make_tree()
-        return mt.get_merkle_root()
+    def add_transaction(self, transaction):
+        self.transactions.append(transaction)
+        self._mt.add_leaf(str(transaction.serialize()), True)
+        self._mt.make_tree()
+        self.merkle_root = self._mt.get_merkle_root()
 
     def serialize(self):
         return {
-            'hash_str': self.hash_str,
+            'hash': self.hash_str,
             'previous': self.previous.hash_str if self.previous else None,
             'nonce': self.nonce,
             'height': self.height,
+            'merkle_root': self.merkle_root,
             'transactions': [t.serialize() for t in self.transactions]
         }
 
     @classmethod
-    def deserialize(cls, sb, previous):
+    def deserialize(cls, serialized_block, previous):
         return cls(
-            sb['hash_str'],
+            serialized_block['hash'],
             previous,
-            [Transaction.deserialize(t) for t in sb['transactions']],
-            sb['nonce'],
-            sb['height'])
+            serialized_block['nonce'],
+            serialized_block['height'],
+            serialized_block['merkle_root'],
+            [Transaction.deserialize(t) for t in serialized_block['transactions']])

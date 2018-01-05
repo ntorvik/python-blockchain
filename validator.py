@@ -24,7 +24,7 @@ class Validator:
         transactions_valid = all(self.validate_transaction(t) for t in new_block.transactions)
         if not transactions_valid:
             return False
-        payload = new_block.get_merkle_root() + tail.hash_str + str(new_block.nonce)
+        payload = new_block.merkle_root + tail.hash_str + str(new_block.nonce)
         computed_hash_str = hashlib.sha256(str.encode(payload)).hexdigest()
         if new_block.hash_str != computed_hash_str:
             return False

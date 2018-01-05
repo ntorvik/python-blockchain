@@ -1,11 +1,13 @@
 from block import Block
 from block_chain import BlockChain
+from transaction import Transaction
 from validator import Validator
 import threading
+import file_helper
 
 
 class MessageProcessor(threading.Thread):
-    def __init__(self, message_queue, network, block_chain, miner, public_key, difficulty):
+    def __init__(self, message_queue, network, block_chain, miner, public_key, difficulty, transaction_queue):
         threading.Thread.__init__(self)
         self.message_queue = message_queue
         self.network = network
@@ -13,6 +15,7 @@ class MessageProcessor(threading.Thread):
         self.miner = miner
         self.public_key = public_key
         self.difficulty = difficulty
+        self.transaction_queue = transaction_queue
         self.validator = Validator(block_chain)
         self.stopped = True
         self.message_processors = {
@@ -69,7 +72,12 @@ class MessageProcessor(threading.Thread):
         print("Received a longer chain")
         self.miner.stop()
         self.block_chain.tail = received_chain.tail
+        file_helper.save_blockchain(self.block_chain.serialize())
         self.miner.start(self.block_chain, self.difficulty)
 
     def _process_transaction_message(self, message):
-        raise Exception("not yet implemented")
+        received_transaction = Transaction.deserialize(message)
+        if not self.validator.validate_transaction(received_transaction):
+            print("Ignoring new transaction because it looks invalid")
+            return
+        self.transaction_queue.put(received_transaction)
