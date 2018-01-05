@@ -40,13 +40,13 @@ class Miner:
             reward_payment = Transaction(None, self.public_key, settings.REWARD, None)
             new_block = Block('', self.block_chain.tail, [reward_payment], self.block_chain.tail.nonce,
                               self.block_chain.tail.height + 1)
-            while not (new_block.hashStr.startswith('0' * self.difficulty)):
+            while not (new_block.hash_str.startswith('0' * self.difficulty)):
                 if self.stopped:
                     return
-                payload = new_block.get_merkle_root() + self.block_chain.tail.hashStr + str(new_block.nonce)
-                new_block.hashStr = hashlib.sha256(str.encode(payload)).hexdigest()
+                payload = new_block.get_merkle_root() + self.block_chain.tail.hash_str + str(new_block.nonce)
+                new_block.hash_str = hashlib.sha256(str.encode(payload)).hexdigest()
                 new_block.nonce += 1
-            print("Mined block: " + new_block.hashStr)
+            print("Mined block: " + new_block.hash_str)
 
             self.block_chain.append(new_block)
             file_helper.save_blockchain(self.block_chain.serialize())

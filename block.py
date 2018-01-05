@@ -3,8 +3,8 @@ from merkletools import MerkleTools
 
 
 class Block:
-    def __init__(self, hashStr, previous, transactions, nonce, height):
-        self.hashStr = hashStr
+    def __init__(self, hash_str, previous, transactions, nonce, height):
+        self.hash_str = hash_str
         self.previous = previous
         self.nonce = nonce
         self.height = height
@@ -18,8 +18,8 @@ class Block:
 
     def serialize(self):
         return {
-            'hashStr': self.hashStr,
-            'previous': self.previous.hashStr if self.previous else None,
+            'hash_str': self.hash_str,
+            'previous': self.previous.hash_str if self.previous else None,
             'nonce': self.nonce,
             'height': self.height,
             'transactions': [t.serialize() for t in self.transactions]
@@ -28,7 +28,7 @@ class Block:
     @classmethod
     def deserialize(cls, sb, previous):
         return cls(
-            sb['hashStr'],
+            sb['hash_str'],
             previous,
             [Transaction.deserialize(t) for t in sb['transactions']],
             sb['nonce'],

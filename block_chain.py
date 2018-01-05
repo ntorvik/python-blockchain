@@ -25,9 +25,9 @@ class BlockChain:
             return cls(None)
         serialized_block = [block for block in serialized_block_chain if block['previous'] is None]
         tail = Block.deserialize(serialized_block[0], None)
-        serialized_block = [block for block in serialized_block_chain if block['previous'] == tail.hashStr]
+        serialized_block = [block for block in serialized_block_chain if block['previous'] == tail.hash_str]
         while len(serialized_block) != 0:
             next_block = Block.deserialize(serialized_block[0], tail)
             tail = next_block
-            serialized_block = [block for block in serialized_block_chain if block['previous'] == tail.hashStr]
+            serialized_block = [block for block in serialized_block_chain if block['previous'] == tail.hash_str]
         return cls(tail)

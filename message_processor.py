@@ -36,7 +36,7 @@ class MessageProcessor:
         # TODO: validate block
         print("Received a new block")
         self.miner.stop()
-        new_block = Block(message['hashStr'], self.block_chain.tail, message['transactions'], message['nonce'],
+        new_block = Block(message['hash_str'], self.block_chain.tail, message['transactions'], message['nonce'],
                           message['height'])
         self.block_chain.append(new_block)
         self.miner.start(self.block_chain, self.difficulty)
