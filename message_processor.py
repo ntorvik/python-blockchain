@@ -1,5 +1,6 @@
 from block import Block
 from block_chain import BlockChain
+from validator import Validator
 
 
 class MessageProcessor:
@@ -10,6 +11,7 @@ class MessageProcessor:
         self.miner = miner
         self.public_key = public_key
         self.difficulty = difficulty
+        self.validator = Validator(block_chain)
 
         self.message_processors = {
             'block': self._process_block_message,
@@ -25,20 +27,22 @@ class MessageProcessor:
             message = self.message_queue.get()
 
     def _process_block_message(self, message):
-        if message['height'] > (self.block_chain.tail.height + 1):
+        received_block = Block.deserialize(message, self.block_chain.tail)
+        if received_block.height > (self.block_chain.tail.height + 1):
             print("I'm missing blocks")
             self.miner.stop()  # TODO: wait for this
             self.network.publish('chain_request', self.block_chain.tail.height)
             return
-        if message['height'] <= self.block_chain.tail.height:
+        if received_block.height <= self.block_chain.tail.height:
             print("Ignoring received block because our chain is longer")
             return
-        # TODO: validate block
+        valid = self.validator.validate_block(received_block)
+        if not valid:
+            print("Ignoring new block because it looks invalid")
+            return
         print("Received a new block")
         self.miner.stop()
-        new_block = Block(message['hash_str'], self.block_chain.tail, message['transactions'], message['nonce'],
-                          message['height'])
-        self.block_chain.append(new_block)
+        self.block_chain.append(received_block)
         self.miner.start(self.block_chain, self.difficulty)
 
     def _process_chain_request_message(self, message):
@@ -50,7 +54,10 @@ class MessageProcessor:
         if received_chain.tail.height <= self.block_chain.tail.height:
             print("Ignoring received chain because our chain is at least as long")
             return
-        # TODO: validate new chain
+        valid = self.validator.validate_chain(received_chain)
+        if not valid:
+            print("Ignoring new chain because it looks invalid")
+            return
         print("Received a longer chain")
         self.miner.stop()
         self.block_chain.tail = received_chain.tail
