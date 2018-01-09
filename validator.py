@@ -1,5 +1,5 @@
 import hashlib
-from key_helper import KeyHelper
+import key_helper
 import settings
 
 
@@ -43,7 +43,7 @@ class Validator:
         if input_transaction is None:
             return False
         # TODO: validate transaction is not spent
-        signature_verified = KeyHelper.verify(transaction, input_transaction.recipient)
+        signature_verified = key_helper.verify(transaction, input_transaction.recipient)
         if not signature_verified:
             return False
         if not input_transaction.quantity == transaction.quantity:

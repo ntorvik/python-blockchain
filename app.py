@@ -6,9 +6,9 @@ from queue import Queue
 from network import Network
 from message_processor import MessageProcessor
 import settings
-from key_helper import KeyHelper
+import key_helper
 
-public_key = KeyHelper().get_public_key()
+public_key = key_helper.get_public_key()
 print("Loading blockchain")
 serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)

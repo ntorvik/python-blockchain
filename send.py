@@ -1,17 +1,16 @@
 import sys
 from network import Network
-from key_helper import KeyHelper
+import key_helper
 from transaction import Transaction
 import file_helper
 from block_chain import BlockChain
-from Cryptodome.Hash import SHA256
+
 
 def main():
     if len(sys.argv) != 3:
         print("Usage: python send.py 1 SOME_PUBLIC_KEY")
         return
 
-    key_helper = KeyHelper()
     public_key = key_helper.get_public_key()
 
     serialized_block_chain = file_helper.load_blockchain()
@@ -31,7 +30,8 @@ def _find_unspent_transaction(block_chain, public_key):
     curr_block = block_chain.tail
     while curr_block is not None:
         for curr_transaction in curr_block.transactions:
-            if curr_transaction.recipient == public_key and not _is_transaction_spent(curr_transaction.get_hash(), block_chain, curr_block.height):
+            if curr_transaction.recipient == public_key and not _is_transaction_spent(curr_transaction.get_hash(),
+                                                                                      block_chain, curr_block.height):
                 return curr_transaction
         curr_block = curr_block.previous
     return None

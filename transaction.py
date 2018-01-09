@@ -3,12 +3,11 @@ from collections import OrderedDict
 from Cryptodome.Hash import SHA256
 from Cryptodome.Signature import PKCS1_v1_5
 import binascii
-from key_helper import KeyHelper
+import key_helper
 
 
 class Transaction:
     def __init__(self, input_transaction_hash, recipient, quantity, signature=None):
-        self.key_helper = KeyHelper()
         self.input_transaction_hash = input_transaction_hash
         self.recipient = recipient
         self.quantity = quantity
@@ -21,7 +20,7 @@ class Transaction:
             ('quantity', self.quantity)
         ])
         digest = SHA256.new(str.encode(str(payload)))
-        signer = PKCS1_v1_5.new(self.key_helper.private_key)
+        signer = PKCS1_v1_5.new(key_helper.private_key)
         signature = signer.sign(digest)
         return binascii.hexlify(signature).decode("utf-8")
 
