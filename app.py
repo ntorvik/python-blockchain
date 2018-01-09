@@ -18,15 +18,22 @@ network = Network(public_key, message_queue)
 miner = Miner(network, public_key, transaction_queue)
 miner.start(block_chain, settings.DIFFICULTY)
 
-message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY, transaction_queue)
+message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY,
+                                     transaction_queue)
 message_processor.start()
 
 network.publish('chain_request', block_chain.tail.height)
 
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print("Exiting gracefully")
-    miner.stop()
-    message_processor.stop()
+
+def main():
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Exiting gracefully")
+        miner.stop()
+        message_processor.stop()
+
+
+if __name__ == "__main__":
+    main()

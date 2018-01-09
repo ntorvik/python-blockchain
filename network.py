@@ -12,7 +12,8 @@ class Network:
             self.listener.start()
 
     def publish(self, subject, data):
-        self.connection.publish('blockchain', json.dumps({'sender': self.public_key, 'subject': subject, 'payload': data}))
+        self.connection.publish('blockchain',
+                                json.dumps({'sender': self.public_key, 'subject': subject, 'payload': data}))
 
     def disconnect(self):
         self.listener.pubsub.unsubscribe()
