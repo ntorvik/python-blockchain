@@ -11,7 +11,7 @@ def main():
         print("Usage: python send.py 1 SOME_PUBLIC_KEY")
         return
 
-    public_key = key_helper.get_public_key()
+    public_key = key_helper.get_public_key_str()
 
     serialized_block_chain = file_helper.load_blockchain()
     block_chain = BlockChain.deserialize(serialized_block_chain)

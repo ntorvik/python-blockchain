@@ -8,7 +8,7 @@ from message_processor import MessageProcessor
 import settings
 import key_helper
 
-public_key = key_helper.get_public_key()
+public_key = key_helper.get_public_key_str()
 print("Loading blockchain")
 serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)
