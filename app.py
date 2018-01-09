@@ -9,15 +9,16 @@ import settings
 from key_helper import KeyHelper
 
 public_key = KeyHelper().get_public_key()
+print("Loading blockchain")
 serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)
 message_queue = Queue()
 transaction_queue = Queue()
 network = Network(public_key, message_queue)
-
+print("Starting miner")
 miner = Miner(network, public_key, transaction_queue)
 miner.start(block_chain, settings.DIFFICULTY)
-
+print("Starting network listener")
 message_processor = MessageProcessor(message_queue, network, block_chain, miner, public_key, settings.DIFFICULTY,
                                      transaction_queue)
 message_processor.start()
@@ -26,6 +27,7 @@ network.publish('chain_request', block_chain.tail.height)
 
 
 def main():
+    print("Running")
     try:
         while True:
             time.sleep(1)
