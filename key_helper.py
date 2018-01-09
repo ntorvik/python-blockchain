@@ -15,13 +15,6 @@ class KeyHelper:
     def get_public_key(self):
         return self.public_key.exportKey().decode("utf-8")
 
-    def sign(self, transaction):
-        payload = transaction.get_signature_payload()
-        digest = SHA256.new(str.encode(payload))
-        signer = PKCS1_v1_5.new(self.private_key)
-        signature = signer.sign(digest)
-        transaction.signature = binascii.hexlify(signature).decode("utf-8")
-
     @staticmethod
     def verify(transaction, public_key_str):
         payload = transaction.get_signature_payload()

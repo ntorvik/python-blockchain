@@ -41,7 +41,7 @@ class Miner:
 
         def mine(self):
             new_block = Block('', self.block_chain.tail, self.block_chain.tail.nonce, self.block_chain.tail.height + 1)
-            new_block.add_transaction(Transaction(None, self.public_key, settings.REWARD, None))
+            new_block.add_transaction(Transaction(None, self.public_key, settings.REWARD))
             while not self.transaction_queue.empty():
                 new_block.add_transaction(self.transaction_queue.get())
             while not (new_block.hash_str.startswith('0' * self.difficulty)):

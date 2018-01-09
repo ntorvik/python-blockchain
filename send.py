@@ -24,7 +24,6 @@ def main():
 
     network = Network(public_key)
     new_transaction = Transaction(input_transaction.get_hash(), sys.argv[2], sys.argv[1])
-    key_helper.sign(new_transaction)
     network.publish("transaction", new_transaction.serialize())
 
 
