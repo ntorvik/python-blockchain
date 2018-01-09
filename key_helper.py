@@ -2,6 +2,7 @@ from Cryptodome.Hash import SHA256
 from Cryptodome.Signature import PKCS1_v1_5
 from Cryptodome.PublicKey import RSA
 import settings
+import binascii
 
 
 class KeyHelper:
@@ -14,16 +15,22 @@ class KeyHelper:
     def get_public_key(self):
         return self.public_key.exportKey().decode("utf-8")
 
-    def sign(self, message):
-        digest = SHA256.new()
-        digest.update(message)
+    def sign(self, transaction):
+        payload = transaction.get_signature_payload()
+        digest = SHA256.new(str.encode(payload))
         signer = PKCS1_v1_5.new(self.private_key)
-        return signer.sign(digest)
+        signature = signer.sign(digest)
+        transaction.signature = binascii.hexlify(signature).decode("utf-8")
 
     @staticmethod
-    def verify(message, signature, public_key_str):
-        digest = SHA256.new()
-        digest.update(message)
+    def verify(transaction, public_key_str):
+        payload = transaction.get_signature_payload()
+        digest = SHA256.new(str.encode(payload))
         public_key = RSA.importKey(public_key_str)
         verifier = PKCS1_v1_5.new(public_key)
-        return verifier.verify(digest, signature)
+        signature = binascii.unhexlify(transaction.signature)
+        try:
+            verifier.verify(digest, signature)
+            return True
+        except Exception:
+            return False

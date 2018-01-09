@@ -42,7 +42,8 @@ class Validator:
         input_transaction = self._find_transaction(transaction.input_transaction_hash)
         if input_transaction is None:
             return False
-        signature_verified = KeyHelper.verify(transaction.get_signature_payload(), transaction.signature, input_transaction.recipient)
+        # TODO: validate transaction is not spent
+        signature_verified = KeyHelper.verify(transaction, input_transaction.recipient)
         if not signature_verified:
             return False
         if not input_transaction.quantity == transaction.quantity:

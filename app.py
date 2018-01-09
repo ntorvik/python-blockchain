@@ -13,7 +13,7 @@ serialized_block_chain = file_helper.load_blockchain()
 block_chain = BlockChain.deserialize(serialized_block_chain)
 message_queue = Queue()
 transaction_queue = Queue()
-network = Network(message_queue, public_key)
+network = Network(public_key, message_queue)
 
 miner = Miner(network, public_key, transaction_queue)
 miner.start(block_chain, settings.DIFFICULTY)

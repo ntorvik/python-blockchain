@@ -4,11 +4,12 @@ import json
 
 
 class Network:
-    def __init__(self, message_queue, public_key):
+    def __init__(self, public_key, message_queue=None):
         self.connection = redis.Redis()
         self.public_key = public_key
-        self.listener = self.Listener(message_queue, public_key)
-        self.listener.start()
+        if message_queue is not None:
+            self.listener = self.Listener(message_queue, public_key)
+            self.listener.start()
 
     def publish(self, subject, data):
         self.connection.publish('blockchain', json.dumps({'sender': self.public_key, 'subject': subject, 'payload': data}))

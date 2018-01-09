@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 
 class Transaction:
-    def __init__(self, input_transaction_hash, recipient, quantity, signature):
+    def __init__(self, input_transaction_hash, recipient, quantity, signature=None):
         self.input_transaction_hash = input_transaction_hash
         self.recipient = recipient
         self.quantity = quantity
@@ -31,5 +31,5 @@ class Transaction:
         return cls(
             serialized_transaction['input_transaction_hash'],
             serialized_transaction['recipient'],
-            serialized_transaction['quantity'],
+            int(serialized_transaction['quantity']),
             serialized_transaction['signature'])
