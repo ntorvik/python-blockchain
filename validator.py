@@ -43,7 +43,7 @@ class Validator:
         if input_transaction is None:
             return False
         # TODO: validate transaction is not spent
-        signature_verified = key_helper.verify(transaction, input_transaction.recipient)
+        signature_verified = transaction.verify_signature(input_transaction.recipient)
         if not signature_verified:
             return False
         if not input_transaction.quantity == transaction.quantity:

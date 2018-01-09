@@ -2,6 +2,7 @@ import hashlib
 from collections import OrderedDict
 from Cryptodome.Hash import SHA256
 from Cryptodome.Signature import PKCS1_v1_5
+from Cryptodome.PublicKey import RSA
 import binascii
 import key_helper
 
@@ -23,6 +24,22 @@ class Transaction:
         signer = PKCS1_v1_5.new(key_helper.private_key)
         signature = signer.sign(digest)
         return binascii.hexlify(signature).decode("utf-8")
+
+    def verify_signature(self, public_key_str):
+        payload = OrderedDict([
+            ('input_transaction_hash', self.input_transaction_hash),
+            ('recipient', self.recipient),
+            ('quantity', self.quantity)
+        ])
+        digest = SHA256.new(str.encode(str(payload)))
+        public_key = RSA.importKey(public_key_str)
+        verifier = PKCS1_v1_5.new(public_key)
+        signature = binascii.unhexlify(self.signature)
+        try:
+            verifier.verify(digest, signature)
+            return True
+        except Exception:
+            return False
 
     def get_hash(self):
         payload = str(OrderedDict([
