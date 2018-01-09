@@ -10,16 +10,25 @@ class Transaction:
         self.signature = signature
 
     def get_hash(self):
-        payload = str(self.serialize())
+        payload = str(OrderedDict([
+            ('input_transaction_hash', self.input_transaction_hash),
+            ('recipient', self.recipient),
+            ('quantity', self.quantity),
+            ('signature', self.signature)
+        ]))
         return hashlib.sha256(str.encode(payload)).hexdigest()
 
     def get_signature_payload(self):
-        serialized = self.serialize()
-        serialized.pop('signature')
+        serialized = OrderedDict([
+            ('input_transaction_hash', self.input_transaction_hash),
+            ('recipient', self.recipient),
+            ('quantity', self.quantity)
+        ])
         return str(serialized)
 
     def serialize(self):
         return OrderedDict([
+            ('hash', self.get_hash()),
             ('input_transaction_hash', self.input_transaction_hash),
             ('recipient', self.recipient),
             ('quantity', self.quantity),
