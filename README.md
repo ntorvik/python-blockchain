@@ -24,6 +24,12 @@ PRIVATE_KEY_FILE = "C:\\Users\\MYUSERNAME\\.ssh\\id_rsa"
 PUBLIC_KEY_FILE = "C:\\Users\\MYUSERNAME\\.ssh\\id_rsa.pub"
 ```
 
+Install python dependencies.
+
+```ps
+pip install --user -r dependencies.txt
+```
+
 Now you can spin up a node.
 
 ```ps
